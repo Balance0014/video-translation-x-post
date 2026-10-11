@@ -64,7 +64,7 @@ python scripts/render.py --input input.mp4 --subtitles work/chinese.srt \
   --title '关键人物说了什么|准确的开场钩子' --speed 1.2 --sample-seconds 8
 ```
 
-Watch the sample. Check English and Chinese order, readability, faces, charts, the watermark, title placement, speech clarity, and motion. Revise the SRT or layout before the full export. Render the final with the same options and a new output path, without `--sample-seconds`:
+Watch the sample. Check English and Chinese order, readability, faces, charts, the watermark, title placement, speech clarity, and motion. If an existing logo occupies the top right, pass `--watermark-position top-left`. Even without English dialogue captions, the soft extension can protect source name labels or other important lower-third content. Revise the SRT or layout before the full export. Render the final with the same options and a new output path, without `--sample-seconds`:
 
 ```bash
 python scripts/render.py --input input.mp4 --subtitles work/chinese.srt \

@@ -131,7 +131,8 @@ def fit_font(draw: ImageDraw.ImageDraw, text: str, font_path: Path,
 
 
 def overlay_images(folder: Path, width: int, height: int, source_height: int,
-                   font_path: Path, watermark: str, title: str | None) -> tuple[Path | None, Path | None]:
+                   font_path: Path, watermark: str, title: str | None,
+                   watermark_position: str = "top-right") -> tuple[Path | None, Path | None]:
     wm_path = None
     title_path = None
     if watermark:
@@ -140,7 +141,8 @@ def overlay_images(folder: Path, width: int, height: int, source_height: int,
         margin = round(width * 0.025)
         font = fit_font(draw, watermark, font_path, max(18, round(width * 0.019)), round(width * 0.46))
         box = draw.textbbox((0, 0), watermark, font=font, stroke_width=2)
-        draw.text((width - margin - (box[2] - box[0]), margin), watermark,
+        wm_x = margin if watermark_position == "top-left" else width - margin - (box[2] - box[0])
+        draw.text((wm_x, margin), watermark,
                   font=font, fill="white", stroke_width=2, stroke_fill=(0, 0, 0, 220))
         wm_path = folder / "watermark.png"
         image.save(wm_path)
@@ -181,6 +183,8 @@ def main() -> None:
     parser.add_argument("--english-subtitles", type=Path,
                         help="English SRT to render when English is a separate track/file")
     parser.add_argument("--watermark", default="")
+    parser.add_argument("--watermark-position", choices=("top-left", "top-right"),
+                        default="top-right")
     parser.add_argument("--title", help="One or two short lines, separated by |")
     parser.add_argument("--title-seconds", type=float, default=3.0)
     parser.add_argument("--speed", type=float, default=1.0)
@@ -239,7 +243,8 @@ def main() -> None:
         else:
             shutil.copyfile(subtitles, chinese)
         wm, title = overlay_images(temp, width, output_height, source_height,
-                                   font_path, args.watermark, args.title)
+                                   font_path, args.watermark, args.title,
+                                   args.watermark_position)
         inputs = ["-i", str(source)]
         overlays = []
         for image in (wm, title):
@@ -261,8 +266,11 @@ def main() -> None:
             base = "[english]"
         if args.layout == "bilingual":
             chain.append(f"{base}setsar=1,split=2[foreground][backdrop]")
-            chain.append(f"[backdrop]scale={width}:{output_height},gblur=sigma=18,"
-                         "eq=brightness=-0.10,setsar=1[soft]")
+            # Sample the middle of the picture for the subtitle extension.
+            # The source's own lower third can be black or carry name labels.
+            chain.append(f"[backdrop]crop=iw:ih*0.5:0:ih*0.25,"
+                         f"scale={width}:{output_height},gblur=sigma=18,"
+                         "eq=brightness=-0.16,setsar=1[soft]")
             chain.append("[soft][foreground]overlay=0:0:shortest=1[canvas]")
             base = "[canvas]"
             size, margin = 21, 8

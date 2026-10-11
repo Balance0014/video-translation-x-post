@@ -69,7 +69,7 @@ python scripts/render.py --input input.mp4 --subtitles work/chinese.srt \
 python scripts/verify.py --output work/final.mp4 --source input.mp4 --speed 1.2
 ```
 
-成片旁自动生成 `work/final.srt`，时间轴已按最终速度重排。没有英文时改用 `chinese-only`。只有确认画面没有会倒置的文字、字幕、图表或 logo，才同时加入 `--mirror --mirror-verified`；双语模式禁止镜像。固定输出帧率下提速会自然减少部分帧，无须强行删帧。
+成片旁自动生成 `work/final.srt`，时间轴已按最终速度重排。没有英文对白字幕时通常改用 `chinese-only`；如果原片底部有姓名标签或关键画面，也可用 `bilingual` 的柔和延展区保护原画面，但不要额外渲染英文字幕。水印与原片右上标志冲突时加 `--watermark-position top-left`。只有确认画面没有会倒置的文字、字幕、图表或 logo，才同时加入 `--mirror --mirror-verified`；双语模式禁止镜像。固定输出帧率下提速会自然减少部分帧，无须强行删帧。
 
 ## 5. 交付、发帖草稿与台账
 
@@ -92,7 +92,7 @@ python scripts/state.py record --entry-file work/ledger-entry.md
 
 | 情况 | 处理 |
 | --- | --- |
-| 原片没有英文，却用了双语布局 | 改用 `--layout chinese-only`。 |
+| 原片没有英文，却用了双语布局 | 通常改用 `--layout chinese-only`；若底部有姓名标签或关键画面，可以保留柔和延展区。 |
 | 中英重叠或长句放不下 | 缩短字幕，重看短样片，再调布局。 |
 | 缺中文字体 | 传入 `--font-file /path/to/CJK-font.ttf`，必要时加 `--font-name`。 |
 | 1.2 倍速听着太赶 | 降低 `--speed`，重新核对时间轴。 |
