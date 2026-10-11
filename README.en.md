@@ -6,6 +6,8 @@
 
 The demo graphics, line of dialogue, and synthesized voice were made for this repository. It shows layout, attribution, and 1.2× speed; the text case study describes a real translation job.
 
+For an X-ready edition, include a brief, accurate visual hook in the first 2–3 seconds by default. Skip it if the source already opens with the same clear point or the user asks not to. Inspect the sample to ensure it does not cover the speaker, existing captions, logos, or attribution.
+
 An independent Codex skill for giving user-provided English videos a distinctive Chinese localized edition with a stronger original feel: checked, natural translation; clean bilingual layout; an accurate opening hook; considered pacing and attribution; a verified export; synced SRT; and an editable X post draft. This describes the presentation of the localized edition, not eligibility for X's Original Content Rewards. Codex checks and translates the content; the scripts help with transcription drafts, rendering, verification, and records. The skill is MIT licensed. Your preferences and job ledger stay outside this folder, so sharing the skill does not share your private history.
 
 Hidden audio or visual perturbations are not a routine deduplication step. Adversarial effects are model-specific, may be removed by upload transcoding, and do not establish originality. Preserve clear audio and picture, accurate translation, and source attribution.
