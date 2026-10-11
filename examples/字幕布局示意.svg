@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 610" role="img" aria-labelledby="title desc">
+  <title id="title">双语字幕布局示意</title>
+  <desc id="desc">上方保留画面与英文字幕，下方柔和延展区显示中文，右上角显示翻译署名。</desc>
+  <defs>
+    <linearGradient id="picture" x2="1" y2="1">
+      <stop offset="0" stop-color="#334d63"/>
+      <stop offset=".55" stop-color="#6a7084"/>
+      <stop offset="1" stop-color="#292f48"/>
+    </linearGradient>
+    <linearGradient id="extension" x2="0" y2="1">
+      <stop offset="0" stop-color="#465266"/>
+      <stop offset="1" stop-color="#273143"/>
+    </linearGradient>
+  </defs>
+  <rect width="960" height="610" rx="20" fill="#121a27"/>
+  <rect x="20" y="20" width="920" height="500" fill="url(#picture)"/>
+  <circle cx="480" cy="220" r="89" fill="#89939e" opacity=".65"/>
+  <path d="M320 446 Q340 325 480 340 Q620 325 640 446" fill="#b5bdc8" opacity=".55"/>
+  <rect x="20" y="520" width="920" height="70" fill="url(#extension)"/>
+  <text x="910" y="64" text-anchor="end" fill="white" font-family="sans-serif" font-size="18">翻译：@yourhandle</text>
+  <text x="480" y="490" text-anchor="middle" fill="white" font-family="sans-serif" font-size="24" stroke="#111827" stroke-width="3" paint-order="stroke">Original English captions stay visible.</text>
+  <text x="480" y="567" text-anchor="middle" fill="white" font-family="sans-serif" font-size="26" stroke="#111827" stroke-width="2" paint-order="stroke">保留英文字幕，中文排在下方。</text>
+</svg>

@@ -1,19 +1,19 @@
-# Video Translation for X
+# X 视频译制与发帖
 
-An independent Codex skill for producing natural Chinese subtitles, a clean bilingual or Chinese-only video, attribution, a checked export, and compelling X copy. The skill is MIT licensed. Your preferences and job ledger stay outside this folder, so sharing the skill does not share your private history.
+把用户提供的英文视频做成自然、准确、排版清楚的中文字幕或双语版，并交付同步字幕文件和可直接修改的 X 帖文草稿。适合需要逐句核对、保留原英文、处理画面避让和署名的发布任务。翻译与事实核查由 Codex 结合素材完成，脚本负责转录草稿、渲染、校验和记录。本技能采用 MIT 许可；个人偏好与任务台账保存在仓库外。
 
-## 0. Install and check prerequisites
+**先看案例：**[真实任务记录](examples/马斯克访谈案例.md) · [播放原创演示短片](examples/layout-demo.mp4) · [同步字幕示例](examples/layout-demo.srt) · [English guide](README.en.md)
 
-Clone the public repository into your skills directory, or copy/download the whole folder there:
+![原创演示短片画面：英文保留在原画面，中文放在下方柔和延展区](examples/layout-demo.png)
+
+演示短片的图形、台词和合成语音均为本仓库制作，仅用于展示排版、署名和 1.2 倍速；真实任务的译写与处理决定见上方案例。
+
+## 1. 从零安装
+
+需要 Codex、Python 3.10+、带 `subtitles`/libass 滤镜的 FFmpeg 和中文字体。macOS/Linux 按下列步骤操作；Windows 建议使用 WSL。
 
 ```bash
 git clone https://github.com/Balance0014/video-translation-x-post.git ~/.codex/skills/video-translation-x-post
-```
-
-If you set `$CODEX_HOME`, use `$CODEX_HOME/skills/video-translation-x-post/` instead. Restart/reload Codex so `$video-translation-x-post` is discoverable. On macOS/Linux, install FFmpeg with the `subtitles`/libass filter and Python 3.10+; on Windows, WSL is the recommended shell path.
-
-```bash
-python3 --version
 cd ~/.codex/skills/video-translation-x-post
 python3 -m venv .venv
 source .venv/bin/activate
@@ -21,57 +21,55 @@ python -m pip install -r requirements.txt
 python scripts/self_test.py
 ```
 
-If FFmpeg or a Chinese font is missing, install them with your OS package manager, then rerun the self-test. The scripts look for `ffmpeg` on `PATH`, in `~/.local/bin`, and in Homebrew's common Apple Silicon location. The self-test makes a tiny synthetic clip and checks both layouts; it does not download a speech model or publish anything. `faster-whisper` is only needed when the input has no dependable transcript; its model downloads on first use unless you pass a local model directory.
+如果设置了 `$CODEX_HOME`，请把仓库放进 `$CODEX_HOME/skills/`。重新载入 Codex 后调用 `$video-translation-x-post`。自检会制作合成短片，检查双语与纯中文布局、1.2 倍速、音视频解码和字幕时间轴；不会发帖，也不会下载语音模型。缺 FFmpeg 或中文字体时，先通过系统包管理器安装，再重新自检。
 
-## 1. Give Codex the real job
+## 2. 给 Codex 一段视频
 
-Attach a video or give its absolute path, then use a request such as:
+附上视频或绝对路径，并复制这段需求，替换路径与署名：
 
-> Use `$video-translation-x-post` on `/absolute/path/input.mp4`. Make natural Chinese subtitles. Keep existing English captions if present and put Chinese below; if absent, use Chinese alone. Add `翻译：@yourhandle`, a short accurate opening hook, and a ready-to-post X summary. Use 1.2× only if speech and scene logic stay clear. Save the video and SRT to my Desktop. Do not post it for me.
+> 用 `$video-translation-x-post` 处理 `/absolute/path/input.mp4`。翻译成母语级中文。有英文字幕就保留，中文放在下面；没有英文就只放中文。不要挡人物、图表，不要大黑条。加 `翻译：@yourhandle` 水印。检查 1.2 倍速是否顺畅，必要时降速。先看短样片，再把视频、同步 SRT 和准确但有抓力的 X 文案交付桌面。不要代发。
 
-The agent should inspect the opening, middle, and ending frames before choosing a layout, read your local preferences, then show a short render sample before full export. You can override any saved preference in the request.
+Codex 应先检查开头、中段、结尾，辨别英文字幕是画面内已有、独立字幕轨还是不存在，再核对原话、翻译、短样片和完整导出。
 
-## 2. Transcript and translation path
+## 3. 转录与翻译
 
-Use an existing reliable transcript or subtitle track first. A separate English subtitle track can be extracted with FFmpeg; inspect the stream index before using this example:
+优先使用可核对的原字幕或逐字稿。若有独立英文字幕轨，先确认流编号，再按实际编号提取。例如第一条字幕轨：
 
 ```bash
 mkdir -p work
 ffmpeg -i input.mp4 -map 0:s:0 work/english.srt
 ```
 
-For English speech with no reliable text, generate a **draft** with the included local ASR helper:
+若没有可靠文本，可用本地工具制作**英文草稿**：
 
 ```bash
 python scripts/transcribe.py --input input.mp4 --output work/english-draft.srt --language en --model base.en
 ```
 
-Have Codex check the draft against audio and frames, then translate it into `work/chinese.srt`. The ASR output is not a finished translation. Ask the agent to verify names, numbers, claims, timing, and cut-off endings. The final Chinese should sound native while preserving the speaker's meaning and uncertainty. The renderer exports a second, retimed SRT next to the finished video, so it stays synchronized after 1.2× speed.
+首次转录可能下载语音模型，也可指定本地模型目录。让 Codex 对照声音和画面核查姓名、数字、观点与被截断的句子，再写 `work/chinese.srt`。转录草稿不是最终翻译；中文要自然，同时忠于原意，不把预测写成事实。
 
-## 3. Render a sample, then the full video
+## 4. 短样片与正式导出
 
-Choose `bilingual` when English is already burned into the video or supply `--english-subtitles work/english.srt` when English exists only as a separate SRT. Choose `chinese-only` when there is no English. For `bilingual`, the renderer extends the picture softly below the original frame so Chinese can sit under English without a solid black bar. It joins Chinese cue lines into one line for this compact area; inspect long cues in the sample and shorten them if necessary.
+画面里已有英文字幕时用 `bilingual`；英文仅在独立 SRT 中时，再加 `--english-subtitles work/english.srt`。没有英文时用 `chinese-only`。
 
 ```bash
 python scripts/render.py --input input.mp4 --subtitles work/chinese.srt \
   --output work/sample.mp4 --layout bilingual --watermark '翻译：@yourhandle' \
-  --title '关键人物说了什么|准确的开场钩子' --speed 1.2 --sample-seconds 8
+  --title '准确的开场钩子|一句话说明主题' --speed 1.2 --sample-seconds 8
 ```
 
-Watch the sample. Check English and Chinese order, readability, faces, charts, the watermark, title placement, speech clarity, and motion. Revise the SRT or layout before the full export. Render the final with the same options and a new output path, without `--sample-seconds`:
+播放样片，检查双语顺序、可读性、人物和图表、水印、标题、声音与镜头。双语模式会在原画面下方做柔和延展区放中文，不用大黑条。长句放不下时先精简字幕。
 
 ```bash
 python scripts/render.py --input input.mp4 --subtitles work/chinese.srt \
   --output work/final.mp4 --layout bilingual --watermark '翻译：@yourhandle' \
-  --title '关键人物说了什么|准确的开场钩子' --speed 1.2
+  --title '准确的开场钩子|一句话说明主题' --speed 1.2
 python scripts/verify.py --output work/final.mp4 --source input.mp4 --speed 1.2
 ```
 
-For a video with no English, replace `--layout bilingual` with `--layout chinese-only`; the Chinese goes on the original frame. Use `--mirror --mirror-verified` only after visual inspection confirms that no readable text or logo becomes reversed. The renderer refuses mirroring in bilingual mode. Speeding up at the original output frame rate naturally samples fewer frames; extra frame deletion is unnecessary.
+成片旁自动生成 `work/final.srt`，时间轴已按最终速度重排。没有英文时改用 `chinese-only`。只有确认画面没有会倒置的文字、字幕、图表或 logo，才同时加入 `--mirror --mirror-verified`；双语模式禁止镜像。固定输出帧率下提速会自然减少部分帧，无须强行删帧。
 
-## 4. Deliver, write X copy, and remember the result
-
-Copy the verified video and editable Chinese SRT to the requested folder. Check that the copied video matches the verified export:
+## 5. 交付、发帖草稿与台账
 
 ```bash
 cp work/final.mp4 ~/Desktop/final.mp4
@@ -80,21 +78,21 @@ python scripts/verify.py --output work/final.mp4 --source input.mp4 --speed 1.2 
   --delivered ~/Desktop/final.mp4
 ```
 
-Have Codex write an X post with a concrete hook, the actual takeaways, and source attribution when known. Label predictions as predictions. A changed MD5, filter, mirror, or text overlay does not by itself make someone else's footage original under [X's current rewards rules](https://help.x.com/en/using-x/original-content-rewards). Do not publish without the account owner's instruction.
+X 文案先用具体信息抓住注意力，再写观众能得到什么；涉及预测就标成预测，知道来源就注明。署名、改色、镜像、抽帧或 MD5 变化本身不代表原视频具备原创资格，具体看 [X 当前规则](https://help.x.com/en/using-x/original-content-rewards)。未经用户授权，不代发。
 
-Run `python scripts/state.py init` once; it prints the private preference and ledger paths. Edit preferences for lasting choices. After every job, append a dated Markdown ledger entry with real input/output paths, decisions, checks, and lessons:
+首次运行 `python scripts/state.py init`，命令会打印私有偏好和台账路径。每次完成任务，把真实素材路径、交付路径、处理选择、验收结果和经验写入 Markdown，再运行：
 
 ```bash
 python scripts/state.py record --entry-file work/ledger-entry.md
 ```
 
-If a process or temporary file was started for the job, end or remove it after the deliverable is verified. Keep reusable ASR caches only when they make future jobs faster.
+## 常见问题
 
-## Troubleshooting
-
-- **No English text but `bilingual` chosen:** use `chinese-only`.
-- **Chinese overlaps English or runs off screen:** shorten the cue, inspect the sample, or adjust layout rather than adding a thick black bar.
-- **Font is missing:** pass `--font-file /path/to/CJK-font.ttf` and, if needed, `--font-name 'Installed Font Family'`.
-- **Speech sounds rushed at 1.2×:** lower `--speed`; the user's latest request controls the choice.
-- **Mirrored writing appears backward:** remove `--mirror`; preserving readable writing takes priority.
-- **Export metadata shows non-square pixels:** rerender with the script and run `verify.py` again.
+| 情况 | 处理 |
+| --- | --- |
+| 原片没有英文，却用了双语布局 | 改用 `--layout chinese-only`。 |
+| 中英重叠或长句放不下 | 缩短字幕，重看短样片，再调布局。 |
+| 缺中文字体 | 传入 `--font-file /path/to/CJK-font.ttf`，必要时加 `--font-name`。 |
+| 1.2 倍速听着太赶 | 降低 `--speed`，重新核对时间轴。 |
+| 镜像后文字反了 | 去掉 `--mirror`。 |
+| 比例异常或交付文件损坏 | 重渲染、运行 `verify.py` 并核对交付副本。 |
