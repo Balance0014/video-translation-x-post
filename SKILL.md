@@ -1,11 +1,11 @@
 ---
 name: video-translation-x-post
-description: Localize a user-provided English video for a Chinese-speaking X audience with natural subtitles, a polished bilingual or Chinese-only export, synced SRT, attribution, verification, and an accurate, attention-grabbing post draft. Use for video localization and X publishing preparation, not for unrelated video edits.
+description: Localize a user-provided English video for a Chinese-speaking X audience with natural translation and light editorial treatment that gives the finished edition a distinctive, original feel. Deliver a polished bilingual or Chinese-only export, synced SRT, attribution, verification, and an accurate X post draft. Use for video localization and X publishing preparation, not for unrelated video edits.
 ---
 
 # X 视频译制与发帖 / X Video Localization & Posting
 
-Deliver the requested video, editable Chinese `.srt`, a concise factual summary, and an X post when requested. Follow the user's latest instructions over any saved defaults. Never imply that cosmetic edits make a reused video original under X's rewards rules.
+Aim for a localized edition with an original feel through natural Chinese writing, deliberate subtitle placement, an accurate opening hook, considered pacing, and clear attribution. Deliver the requested video, editable Chinese `.srt`, a concise factual summary, and an X post when requested. Follow the user's latest instructions over any saved defaults. Never imply that cosmetic edits make a reused video original under X's rewards rules.
 
 ## Start each job
 

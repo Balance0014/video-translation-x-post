@@ -6,7 +6,7 @@
 
 The demo graphics, line of dialogue, and synthesized voice were made for this repository. It shows layout, attribution, and 1.2× speed; the text case study describes a real translation job.
 
-An independent Codex skill for turning user-provided English videos into natural Chinese-subtitled or bilingual editions, with attribution, a checked export, a synced SRT, and an editable X post draft. Codex checks and translates the content; the scripts help with transcription drafts, rendering, verification, and records. The skill is MIT licensed. Your preferences and job ledger stay outside this folder, so sharing the skill does not share your private history.
+An independent Codex skill for giving user-provided English videos a distinctive Chinese localized edition with a stronger original feel: checked, natural translation; clean bilingual layout; an accurate opening hook; considered pacing and attribution; a verified export; synced SRT; and an editable X post draft. This describes the presentation of the localized edition, not eligibility for X's Original Content Rewards. Codex checks and translates the content; the scripts help with transcription drafts, rendering, verification, and records. The skill is MIT licensed. Your preferences and job ledger stay outside this folder, so sharing the skill does not share your private history.
 
 ## 0. Install and check prerequisites
 
