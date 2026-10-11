@@ -27,6 +27,8 @@ def probe(ffmpeg: str, path: Path) -> tuple[float, str, bool]:
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", required=True, type=Path)
+    parser.add_argument("--subtitles", type=Path,
+                        help="Editable SRT; defaults to a same-named sidecar when present")
     parser.add_argument("--source", type=Path)
     parser.add_argument("--speed", type=float, default=1.0)
     parser.add_argument("--delivered", type=Path, help="Copied deliverable to compare byte for byte")
@@ -60,6 +62,19 @@ def main() -> None:
         if not args.delivered.is_file() or not filecmp.cmp(args.output, args.delivered,
                                                            shallow=False):
             parser.error("Delivered copy differs from verified export")
+    subtitles = args.subtitles or args.output.with_suffix(".srt")
+    if args.subtitles and not subtitles.is_file():
+        parser.error("Editable SRT does not exist")
+    if subtitles.is_file() and subtitles.stat().st_size:
+        stamps = re.findall(r"-->\s*(\d+):(\d{2}):(\d{2}),(\d{3})",
+                            subtitles.read_text(encoding="utf-8-sig"))
+        if not stamps:
+            parser.error("Editable SRT has no valid cue timings")
+        hours, minutes, seconds, millis = map(int, stamps[-1])
+        last = hours * 3600 + minutes * 60 + seconds + millis / 1000
+        if last > duration + 0.65:
+            parser.error(f"SRT extends to {last:.2f}s beyond video duration {duration:.2f}s")
+        print(f"PASS: editable SRT ends at {last:.2f}s")
     print(f"PASS: {duration:.2f}s; audio present; square pixels; full decode; {video}")
     if args.delivered:
         print("PASS: delivered copy matches byte for byte")

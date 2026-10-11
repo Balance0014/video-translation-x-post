@@ -74,6 +74,48 @@ def one_line_srt(source: Path, destination: Path) -> None:
     destination.write_text("\n\n".join(blocks) + "\n", encoding="utf-8")
 
 
+def retime_srt(source: Path, destination: Path, speed: float,
+               sample_seconds: float | None) -> int:
+    """Export editable subtitle cues on the finished video's timeline."""
+    def parse_time(value: str) -> int:
+        match = re.fullmatch(r"(\d+):(\d{2}):(\d{2}),(\d{3})", value)
+        if not match:
+            fail(f"Invalid SRT timestamp: {value}")
+        hours, minutes, seconds, millis = map(int, match.groups())
+        return ((hours * 60 + minutes) * 60 + seconds) * 1000 + millis
+
+    def write_time(milliseconds: int) -> str:
+        hours, remainder = divmod(milliseconds, 3_600_000)
+        minutes, remainder = divmod(remainder, 60_000)
+        seconds, millis = divmod(remainder, 1000)
+        return f"{hours:02}:{minutes:02}:{seconds:02},{millis:03}"
+
+    limit = round(sample_seconds * 1000) if sample_seconds is not None else None
+    result = []
+    for block in re.split(r"\n\s*\n", source.read_text(encoding="utf-8-sig").strip()):
+        lines = block.splitlines()
+        if len(lines) < 3 or " --> " not in lines[1]:
+            fail(f"Invalid SRT cue: {block[:80]!r}")
+        start_text, end_text = lines[1].split(" --> ", 1)
+        start = round(parse_time(start_text) / speed)
+        end = round(parse_time(end_text) / speed)
+        if limit is not None:
+            if start >= limit:
+                break
+            end = min(end, limit)
+        if end <= start:
+            continue
+        result.append(f"{len(result)+1}\n{write_time(start)} --> {write_time(end)}\n"
+                      + "\n".join(lines[2:]))
+    if not result:
+        if sample_seconds is not None:
+            destination.write_text("", encoding="utf-8")
+            return 0
+        fail("No subtitle cues remain after retiming.")
+    destination.write_text("\n\n".join(result) + "\n", encoding="utf-8")
+    return len(result)
+
+
 def filter_path(path: Path) -> str:
     return str(path).replace("\\", "/").replace(":", "\\:").replace("'", "\\'")
 
@@ -132,6 +174,8 @@ def main() -> None:
     parser.add_argument("--input", required=True, type=Path)
     parser.add_argument("--subtitles", required=True, type=Path, help="Checked Chinese SRT")
     parser.add_argument("--output", required=True, type=Path)
+    parser.add_argument("--output-subtitles", type=Path,
+                        help="Editable SRT for the final timeline; defaults beside output video")
     parser.add_argument("--layout", required=True, choices=("bilingual", "chinese-only"),
                         help="bilingual assumes English is already visible in the source")
     parser.add_argument("--english-subtitles", type=Path,
@@ -152,12 +196,17 @@ def main() -> None:
     source = args.input.expanduser().resolve()
     subtitles = args.subtitles.expanduser().resolve()
     output = args.output.expanduser().resolve()
+    output_subtitles = (args.output_subtitles or output.with_suffix(".srt")).expanduser().resolve()
     if not source.is_file() or not subtitles.is_file():
         fail("Input video or Chinese SRT does not exist.")
     if output == source:
         fail("Output must be different from input.")
+    if output_subtitles == subtitles or output_subtitles == output:
+        fail("Exported SRT must not replace the source SRT or video.")
     if output.exists() and not args.overwrite:
         fail(f"Output already exists: {output} (pass --overwrite to replace it)")
+    if output_subtitles.exists() and not args.overwrite:
+        fail(f"Exported SRT already exists: {output_subtitles} (pass --overwrite to replace it)")
     if args.layout != "bilingual" and args.english_subtitles:
         fail("--english-subtitles requires --layout bilingual")
     if args.english_subtitles and not args.english_subtitles.is_file():
@@ -180,6 +229,7 @@ def main() -> None:
         extra = max(60, round(source_height * 0.111))
         output_height += extra + (extra % 2)
     output.parent.mkdir(parents=True, exist_ok=True)
+    output_subtitles.parent.mkdir(parents=True, exist_ok=True)
 
     with tempfile.TemporaryDirectory(prefix="video-translation-x-") as temp_name:
         temp = Path(temp_name)
@@ -249,7 +299,9 @@ def main() -> None:
             fail(f"FFmpeg render failed (exit {error.returncode}).")
         except subprocess.TimeoutExpired:
             fail("FFmpeg render exceeded the 2-hour limit.")
+        count = retime_srt(chinese, output_subtitles, args.speed, args.sample_seconds)
     print(output)
+    print(f"Editable subtitles: {output_subtitles} ({count} cues)")
 
 
 if __name__ == "__main__":

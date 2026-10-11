@@ -19,7 +19,7 @@ Deliver the requested video, editable Chinese `.srt`, a concise factual summary,
 - If English captions exist, keep them readable and place Chinese below them. If they are absent, place Chinese directly on the video. Avoid a large solid black subtitle bar. Use a restrained broadcast-style font, outline, and background treatment; do not cover faces, demonstrations, charts, or logos.
 - Add only the requested watermark. A short hook can improve the opening, but it must be accurate and visually unobtrusive. Mirror only after checking that no visible text, logos, charts, or captions would become reversed. Do not use mirroring, color changes, frame dropping, or MD5 changes as a claim of originality.
 - Use 1.2× speed only when requested or saved as the user's preference. At a fixed output frame rate, speeding up naturally samples fewer video frames; avoid extra frame removal that causes jitter. Review speech, timing, logic, and any scene transition after speeding up.
-- Render a short sample first. Inspect it, then render the full video with `scripts/render.py` or equivalent tools. Run `scripts/verify.py`, inspect opening/middle/end frames and audio, and confirm the delivered copy matches the verified file.
+- Render a short sample first. Inspect it, then render the full video with `scripts/render.py` or equivalent tools. After any speed change, deliver the retimed editable SRT matching the final video's timeline. Run `scripts/verify.py`, inspect opening/middle/end frames and audio, and confirm the delivered copy matches the verified file.
 
 ## Publish package and memory
 

@@ -46,7 +46,7 @@ For English speech with no reliable text, generate a **draft** with the included
 python scripts/transcribe.py --input input.mp4 --output work/english-draft.srt --language en --model base.en
 ```
 
-Have Codex check the draft against audio and frames, then translate it into `work/chinese.srt`. The ASR output is not a finished translation. Ask the agent to verify names, numbers, claims, timing, and cut-off endings. The final Chinese should sound native while preserving the speaker's meaning and uncertainty.
+Have Codex check the draft against audio and frames, then translate it into `work/chinese.srt`. The ASR output is not a finished translation. Ask the agent to verify names, numbers, claims, timing, and cut-off endings. The final Chinese should sound native while preserving the speaker's meaning and uncertainty. The renderer exports a second, retimed SRT next to the finished video, so it stays synchronized after 1.2× speed.
 
 ## 3. Render a sample, then the full video
 
@@ -75,7 +75,7 @@ Copy the verified video and editable Chinese SRT to the requested folder. Check 
 
 ```bash
 cp work/final.mp4 ~/Desktop/final.mp4
-cp work/chinese.srt ~/Desktop/chinese.srt
+cp work/final.srt ~/Desktop/final.srt
 python scripts/verify.py --output work/final.mp4 --source input.mp4 --speed 1.2 \
   --delivered ~/Desktop/final.mp4
 ```
