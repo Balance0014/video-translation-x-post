@@ -4,6 +4,8 @@
 
 这里的「逼近原创」指译制表达和成片观感。X 对原创内容另有实质性要求；镜像、滤镜、调速、叠字或更改文件指纹本身不会使他人的视频获得原创资格。见 [X 原创内容规则](https://help.x.com/en/using-x/original-content-rewards)。
 
+不把“听不见的音轨”或“看不见的蒙层”当作常规去重功能：这类对抗扰动只可能针对特定识别模型有效，上传转码后也未必保留，更不能证明内容原创。制作时优先保证音画清晰、译文准确与来源透明。
+
 **先看案例：**[真实任务记录](examples/马斯克访谈案例.md) · [播放原创演示短片](examples/layout-demo.mp4) · [同步字幕示例](examples/layout-demo.srt) · [English guide](README.en.md)
 
 ![原创演示短片画面：英文保留在原画面，中文放在下方柔和延展区](examples/layout-demo.png)

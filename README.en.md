@@ -8,6 +8,8 @@ The demo graphics, line of dialogue, and synthesized voice were made for this re
 
 An independent Codex skill for giving user-provided English videos a distinctive Chinese localized edition with a stronger original feel: checked, natural translation; clean bilingual layout; an accurate opening hook; considered pacing and attribution; a verified export; synced SRT; and an editable X post draft. This describes the presentation of the localized edition, not eligibility for X's Original Content Rewards. Codex checks and translates the content; the scripts help with transcription drafts, rendering, verification, and records. The skill is MIT licensed. Your preferences and job ledger stay outside this folder, so sharing the skill does not share your private history.
 
+Hidden audio or visual perturbations are not a routine deduplication step. Adversarial effects are model-specific, may be removed by upload transcoding, and do not establish originality. Preserve clear audio and picture, accurate translation, and source attribution.
+
 ## 0. Install and check prerequisites
 
 Clone the public repository into your skills directory, or copy/download the whole folder there:
