@@ -132,7 +132,8 @@ def fit_font(draw: ImageDraw.ImageDraw, text: str, font_path: Path,
 
 def overlay_images(folder: Path, width: int, height: int, source_height: int,
                    font_path: Path, watermark: str, title: str | None,
-                   watermark_position: str = "top-right") -> tuple[Path | None, Path | None]:
+                   watermark_position: str = "top-right",
+                   title_position: str = "upper-left") -> tuple[Path | None, Path | None]:
     wm_path = None
     title_path = None
     if watermark:
@@ -153,8 +154,8 @@ def overlay_images(folder: Path, width: int, height: int, source_height: int,
         image = Image.new("RGBA", (width, height), (0, 0, 0, 0))
         draw = ImageDraw.Draw(image)
         x = round(width * 0.02)
-        y = round(source_height * 0.18)
-        panel_w = round(width * 0.39)
+        y = round(source_height * (0.30 if title_position == "middle-left" else 0.18))
+        panel_w = round(width * (0.34 if title_position == "middle-left" else 0.39))
         panel_h = round(source_height * (0.11 if len(lines) == 1 else 0.19))
         draw.rounded_rectangle((x, y, x + panel_w, y + panel_h),
                                radius=max(8, round(width * 0.014)),
@@ -186,6 +187,8 @@ def main() -> None:
     parser.add_argument("--watermark-position", choices=("top-left", "top-right"),
                         default="top-right")
     parser.add_argument("--title", help="One or two short lines, separated by |")
+    parser.add_argument("--title-position", choices=("upper-left", "middle-left"),
+                        default="upper-left")
     parser.add_argument("--title-seconds", type=float, default=3.0)
     parser.add_argument("--speed", type=float, default=1.0)
     parser.add_argument("--mirror", action="store_true")
@@ -244,7 +247,7 @@ def main() -> None:
             shutil.copyfile(subtitles, chinese)
         wm, title = overlay_images(temp, width, output_height, source_height,
                                    font_path, args.watermark, args.title,
-                                   args.watermark_position)
+                                   args.watermark_position, args.title_position)
         inputs = ["-i", str(source)]
         overlays = []
         for image in (wm, title):

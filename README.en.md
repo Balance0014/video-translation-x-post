@@ -70,6 +70,8 @@ python scripts/render.py --input input.mp4 --subtitles work/chinese.srt \
 
 Watch the sample. Check English and Chinese order, readability, faces, charts, the watermark, title placement, speech clarity, and motion. If an existing logo occupies the top right, pass `--watermark-position top-left`. Even without English dialogue captions, the soft extension can protect source name labels or other important lower-third content. Revise the SRT or layout before the full export. Render the final with the same options and a new output path, without `--sample-seconds`:
 
+If the default upper-left title would overlap a speaker, use `--title-position middle-left` and confirm the placement in the sample.
+
 ```bash
 python scripts/render.py --input input.mp4 --subtitles work/chinese.srt \
   --output work/final.mp4 --layout bilingual --watermark '翻译：@yourhandle' \
