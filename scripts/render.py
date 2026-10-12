@@ -151,20 +151,28 @@ def overlay_images(folder: Path, width: int, height: int, source_height: int,
         lines = [line.strip() for line in title.split("|") if line.strip()]
         if not 1 <= len(lines) <= 2:
             fail("--title accepts one or two lines separated by |")
+        if title_position == "band-left" and len(lines) != 1:
+            fail("--title-position band-left requires a one-line title")
         image = Image.new("RGBA", (width, height), (0, 0, 0, 0))
         draw = ImageDraw.Draw(image)
         x = round(width * 0.02)
-        y = round(source_height * ({"upper-left": 0.18,
-                                     "middle-left": 0.30,
-                                     "lower-left": 0.70}[title_position]))
-        panel_w = round(width * (0.34 if title_position == "middle-left" else 0.39))
-        panel_h = round(source_height * (0.11 if len(lines) == 1 else 0.19))
+        if title_position == "band-left":
+            y = source_height + round(source_height * 0.004)
+            panel_w = round(width * 0.68)
+            panel_h = round(source_height * 0.039)
+        else:
+            y = round(source_height * ({"upper-left": 0.18,
+                                         "middle-left": 0.30,
+                                         "lower-left": 0.70}[title_position]))
+            panel_w = round(width * (0.34 if title_position == "middle-left" else 0.39))
+            panel_h = round(source_height * (0.11 if len(lines) == 1 else 0.19))
         draw.rounded_rectangle((x, y, x + panel_w, y + panel_h),
                                radius=max(8, round(width * 0.014)),
                                fill=(0, 0, 0, 190), outline=(255, 255, 255, 70), width=2)
         for index, line in enumerate(lines):
             font = fit_font(draw, line, font_path,
-                            max(20, round(width * (0.030 if index == 0 else 0.031))),
+                            max(18, round(width * (0.022 if title_position == "band-left" else
+                                                  0.030 if index == 0 else 0.031))),
                             panel_w - round(width * 0.035))
             text_y = y + round(panel_h * (0.12 if index == 0 else 0.52))
             draw.text((x + round(width * 0.018), text_y), line, font=font,
@@ -189,7 +197,7 @@ def main() -> None:
     parser.add_argument("--watermark-position", choices=("top-left", "top-right"),
                         default="top-right")
     parser.add_argument("--title", help="One or two short lines, separated by |")
-    parser.add_argument("--title-position", choices=("upper-left", "middle-left", "lower-left"),
+    parser.add_argument("--title-position", choices=("upper-left", "middle-left", "lower-left", "band-left"),
                         default="upper-left")
     parser.add_argument("--title-seconds", type=float, default=3.0)
     parser.add_argument("--speed", type=float, default=1.0)
@@ -224,6 +232,8 @@ def main() -> None:
         fail("English SRT does not exist.")
     if args.mirror and (args.layout == "bilingual" or not args.mirror_verified):
         fail("Mirror requires chinese-only layout and --mirror-verified after visual inspection.")
+    if args.title_position == "band-left" and args.layout != "bilingual":
+        fail("Band-left title requires bilingual layout with a subtitle extension.")
     if not 0.5 <= args.speed <= 2.0 or args.title_seconds <= 0:
         fail("Speed must be 0.5–2.0 and title duration must be positive.")
     if args.subtitle_font_size is not None and not 8 <= args.subtitle_font_size <= 48:
