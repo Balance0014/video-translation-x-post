@@ -157,9 +157,9 @@ def overlay_images(folder: Path, width: int, height: int, source_height: int,
         draw = ImageDraw.Draw(image)
         x = round(width * 0.02)
         if title_position == "band-left":
-            y = source_height + round(source_height * 0.004)
+            y = source_height + round(source_height * 0.003)
             panel_w = round(width * 0.68)
-            panel_h = round(source_height * 0.039)
+            panel_h = round(source_height * (0.025 if source_height <= 800 else 0.039))
         else:
             y = round(source_height * ({"upper-left": 0.18,
                                          "middle-left": 0.30,
@@ -171,10 +171,12 @@ def overlay_images(folder: Path, width: int, height: int, source_height: int,
                                fill=(0, 0, 0, 190), outline=(255, 255, 255, 70), width=2)
         for index, line in enumerate(lines):
             font = fit_font(draw, line, font_path,
-                            max(18, round(width * (0.022 if title_position == "band-left" else
+                            max(14, round(width * ((0.014 if source_height <= 800 else 0.022)
+                                                  if title_position == "band-left" else
                                                   0.030 if index == 0 else 0.031))),
                             panel_w - round(width * 0.035))
-            text_y = y + round(panel_h * (0.12 if index == 0 else 0.52))
+            text_y = y + round(panel_h * (0.03 if title_position == "band-left" else
+                                         0.12 if index == 0 else 0.52))
             draw.text((x + round(width * 0.018), text_y), line, font=font,
                       fill=(255, 204, 70, 255) if index == 0 else "white")
         title_path = folder / "title.png"
