@@ -75,6 +75,8 @@ python scripts/verify.py --output work/final.mp4 --source input.mp4 --speed 1.2
 
 成片旁自动生成 `work/final.srt`，时间轴已按最终速度重排。没有英文对白字幕时通常改用 `chinese-only`；如果原片底部有姓名标签或关键画面，也可用 `bilingual` 的柔和延展区保护原画面，但不要额外渲染英文字幕。水印与原片右上标志冲突时加 `--watermark-position top-left`。只有确认画面没有会倒置的文字、字幕、图表或 logo，才同时加入 `--mirror --mirror-verified`；双语模式禁止镜像。固定输出帧率下提速会自然减少部分帧，无须强行删帧。
 
+macOS 上的长视频可给样片和正式导出同时加 `--encoder h264_videotoolbox --video-bitrate 1500k` 使用硬件编码；先检查样片画质，分辨率更高时按需提高码率。默认仍用 `libx264`。
+
 片头标题默认在左上；若会碰到讲者头部，可用 `--title-position middle-left` 或 `--title-position lower-left` 放到左侧空白。画面处处有重要信息时，双语模式可用 `--title-position band-left`，将单行标题放进下方柔和延展区的上半部。方形、高分辨率视频若出现中文字幕左右被裁切，可用 `--subtitle-font-size 12` 等较小字号，再目检样片。仍需确认标题、字幕没有遮挡关键信息。
 
 ## 5. 交付、发帖草稿与台账

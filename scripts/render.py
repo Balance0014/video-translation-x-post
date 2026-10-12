@@ -203,6 +203,10 @@ def main() -> None:
                         default="upper-left")
     parser.add_argument("--title-seconds", type=float, default=3.0)
     parser.add_argument("--speed", type=float, default=1.0)
+    parser.add_argument("--encoder", choices=("libx264", "h264_videotoolbox"), default="libx264",
+                        help="Optional macOS hardware encoder for long renders")
+    parser.add_argument("--video-bitrate", default="1500k",
+                        help="Bitrate when using h264_videotoolbox (default: 1500k)")
     parser.add_argument("--mirror", action="store_true")
     parser.add_argument("--mirror-verified", action="store_true",
                         help="Confirms visible writing/logos will not become reversed")
@@ -242,6 +246,8 @@ def main() -> None:
         fail("Subtitle font size must be between 8 and 48.")
     if args.sample_seconds is not None and args.sample_seconds <= 0:
         fail("Sample duration must be positive.")
+    if not re.fullmatch(r"[1-9][0-9]*[kKmM]?", args.video_bitrate):
+        fail("--video-bitrate must be a positive rate such as 1500k or 3M.")
     ffmpeg = find_ffmpeg()
     if not ffmpeg:
         fail("ffmpeg not found. Install FFmpeg with libass and put it on PATH.")
@@ -314,9 +320,12 @@ def main() -> None:
             base = "[titled]"
         chain.append(f"{base}setpts=PTS/{args.speed},fps={fps:.6f},setsar=1[v]")
         chain.append(f"[0:a]atempo={args.speed}[a]")
+        video_encode = (["-c:v", "libx264", "-preset", "veryfast", "-crf", "20"]
+                        if args.encoder == "libx264" else
+                        ["-c:v", "h264_videotoolbox", "-b:v", args.video_bitrate])
         cmd = [ffmpeg, "-hide_banner", "-loglevel", "error", *inputs,
                "-filter_complex", ";".join(chain), "-map", "[v]", "-map", "[a]",
-               "-c:v", "libx264", "-preset", "veryfast", "-crf", "20",
+               *video_encode,
                "-pix_fmt", "yuv420p", "-c:a", "aac", "-b:a", "128k",
                "-movflags", "+faststart"]
         if args.sample_seconds is not None:
