@@ -11,6 +11,7 @@ Aim for a localized edition with an original feel through natural Chinese writin
 
 1. Run `python3 scripts/state.py init`; read the returned preferences and recent ledger entries. State lives outside this shareable skill and is optional for first-time users.
 2. Identify the user's input file, output location, watermark, and requested publishing assets. Inspect duration, resolution, audio, subtitle tracks, and representative opening, middle, and ending frames. Confirm whether English captions are burned into the image, available as a subtitle track, or absent. Do not infer this from metadata alone.
+   Treat the entire user-provided video as the edit scope unless the user explicitly requests a cut or excerpt. A long runtime or intent to post on X does not authorize shortening it. If an optional scope question goes unanswered, continue with the full file.
 3. Reuse trustworthy existing transcripts or subtitles. Otherwise transcribe with an available ASR tool; `scripts/transcribe.py` is one local option. Check names, numbers, claims, and cut-off endings against audio and frames before translating.
 
 ## Translate and edit
