@@ -75,7 +75,7 @@ python scripts/verify.py --output work/final.mp4 --source input.mp4 --speed 1.2
 
 成片旁自动生成 `work/final.srt`，时间轴已按最终速度重排。没有英文对白字幕时通常改用 `chinese-only`；如果原片底部有姓名标签或关键画面，也可用 `bilingual` 的柔和延展区保护原画面，但不要额外渲染英文字幕。水印与原片右上标志冲突时加 `--watermark-position top-left`。只有确认画面没有会倒置的文字、字幕、图表或 logo，才同时加入 `--mirror --mirror-verified`；双语模式禁止镜像。固定输出帧率下提速会自然减少部分帧，无须强行删帧。
 
-片头标题默认在左上；若会碰到讲者头部，可用 `--title-position middle-left` 把标题放到左侧中部空白。仍需用样片确认，不要靠固定坐标猜测。
+片头标题默认在左上；若会碰到讲者头部，可用 `--title-position middle-left` 或 `--title-position lower-left` 放到左侧空白。方形、高分辨率视频若出现中文字幕左右被裁切，可用 `--subtitle-font-size 12` 等较小字号，再目检样片。仍需确认标题、字幕没有遮挡关键信息。
 
 ## 5. 交付、发帖草稿与台账
 

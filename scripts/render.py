@@ -154,7 +154,9 @@ def overlay_images(folder: Path, width: int, height: int, source_height: int,
         image = Image.new("RGBA", (width, height), (0, 0, 0, 0))
         draw = ImageDraw.Draw(image)
         x = round(width * 0.02)
-        y = round(source_height * (0.30 if title_position == "middle-left" else 0.18))
+        y = round(source_height * ({"upper-left": 0.18,
+                                     "middle-left": 0.30,
+                                     "lower-left": 0.70}[title_position]))
         panel_w = round(width * (0.34 if title_position == "middle-left" else 0.39))
         panel_h = round(source_height * (0.11 if len(lines) == 1 else 0.19))
         draw.rounded_rectangle((x, y, x + panel_w, y + panel_h),
@@ -187,7 +189,7 @@ def main() -> None:
     parser.add_argument("--watermark-position", choices=("top-left", "top-right"),
                         default="top-right")
     parser.add_argument("--title", help="One or two short lines, separated by |")
-    parser.add_argument("--title-position", choices=("upper-left", "middle-left"),
+    parser.add_argument("--title-position", choices=("upper-left", "middle-left", "lower-left"),
                         default="upper-left")
     parser.add_argument("--title-seconds", type=float, default=3.0)
     parser.add_argument("--speed", type=float, default=1.0)
@@ -196,6 +198,8 @@ def main() -> None:
                         help="Confirms visible writing/logos will not become reversed")
     parser.add_argument("--font-file")
     parser.add_argument("--font-name", default="PingFang SC", help="Font family for FFmpeg subtitles")
+    parser.add_argument("--subtitle-font-size", type=int,
+                        help="Override Chinese ASS font size when a source aspect ratio needs it")
     parser.add_argument("--sample-seconds", type=float, help="Make a short preview first")
     parser.add_argument("--overwrite", action="store_true")
     args = parser.parse_args()
@@ -222,6 +226,8 @@ def main() -> None:
         fail("Mirror requires chinese-only layout and --mirror-verified after visual inspection.")
     if not 0.5 <= args.speed <= 2.0 or args.title_seconds <= 0:
         fail("Speed must be 0.5–2.0 and title duration must be positive.")
+    if args.subtitle_font_size is not None and not 8 <= args.subtitle_font_size <= 48:
+        fail("Subtitle font size must be between 8 and 48.")
     if args.sample_seconds is not None and args.sample_seconds <= 0:
         fail("Sample duration must be positive.")
     ffmpeg = find_ffmpeg()
@@ -279,6 +285,7 @@ def main() -> None:
             size, margin = 21, 8
         else:
             size, margin = 23, 24
+        size = args.subtitle_font_size or size
         zh_style = (f"FontName={args.font_name},FontSize={size},"
                     "PrimaryColour=&H00FFFFFF&,OutlineColour=&H00000000&,"
                     f"BorderStyle=1,Outline=2,Shadow=0,Alignment=2,MarginV={margin}")
