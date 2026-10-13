@@ -58,6 +58,8 @@ python scripts/transcribe.py --input input.mp4 --output work/english-draft.srt -
 
 Have Codex check the draft against audio and frames, then translate it into `work/chinese.srt`. The ASR output is not a finished translation. Ask the agent to verify names, numbers, claims, timing, and cut-off endings. The final Chinese should sound native while preserving the speaker's meaning and uncertainty. The renderer exports a second, retimed SRT next to the finished video, so it stays synchronized after 1.2× speed.
 
+For long videos, process time-coded batches and save the transcript, translation, and corrections in `work/`. Correct individual cues without retranscribing or retranslating the whole source, and do not resend the entire transcript through the model on every revision. Before the full render, read the complete Chinese SRT for fluency; check uncertain lines against audio and source text, including names, numbers, speaker changes, and shot or slide transitions. Check for empty, invalid, or overlapping cues and coverage of the opening and ending. Visual spot checks do not replace a complete text review.
+
 ## 3. Render a sample, then the full video
 
 Choose `bilingual` when English is already burned into the video or supply `--english-subtitles work/english.srt` when English exists only as a separate SRT. Choose `chinese-only` when there is no English. For `bilingual`, the renderer extends the picture softly below the original frame so Chinese can sit under English without a solid black bar. It joins Chinese cue lines into one line for this compact area; inspect long cues in the sample and shorten them if necessary.
@@ -69,6 +71,8 @@ python scripts/render.py --input input.mp4 --subtitles work/chinese.srt \
 ```
 
 Watch the sample. Check English and Chinese order, readability, faces, charts, the watermark, title placement, speech clarity, and motion. If an existing logo occupies the top right, pass `--watermark-position top-left`. Even without English dialogue captions, the soft extension can protect source name labels or other important lower-third content. Revise the SRT or layout before the full export. Render the final with the same options and a new output path, without `--sample-seconds`:
+
+Settle the subtitles, hook, layout, font size, and speed before starting a long full render. Fix and rerender if final QA reveals a real defect; the pre-render gate removes avoidable rework without weakening quality checks.
 
 If the default upper-left title would overlap a speaker, use `--title-position middle-left` or `--title-position lower-left`. When the picture is crowded, bilingual layout supports `--title-position band-left` for a one-line hook in the upper part of the soft subtitle extension. Confirm the placement in the sample. For square high-resolution clips, use `--subtitle-font-size 12` or another checked value if Chinese text is clipped horizontally.
 

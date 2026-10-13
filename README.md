@@ -54,6 +54,8 @@ python scripts/transcribe.py --input input.mp4 --output work/english-draft.srt -
 
 首次转录可能下载语音模型，也可指定本地模型目录。让 Codex 对照声音和画面核查姓名、数字、观点与被截断的句子，再写 `work/chinese.srt`。转录草稿不是最终翻译；中文要自然，同时忠于原意，不把预测写成事实。
 
+长视频按时间码分批处理，把逐字稿、译文和修订保存在 `work/`；发现个别错词时只修相应字幕，不重新转录或翻译整片，也不要每轮把整份逐字稿重新塞进对话。正式渲染前要完整通读中文字幕，回听疑难句并对照原稿核实姓名、数字、说话人切换及镜头/幻灯片转场；检查空白、时长异常、重叠字幕，以及开头和结尾是否覆盖。抽查画面不能代替全片译文通读。
+
 ## 4. 短样片与正式导出
 
 画面里已有英文字幕时用 `bilingual`；英文仅在独立 SRT 中时，再加 `--english-subtitles work/english.srt`。没有英文时用 `chinese-only`。
@@ -65,6 +67,8 @@ python scripts/render.py --input input.mp4 --subtitles work/chinese.srt \
 ```
 
 播放样片，检查双语顺序、可读性、人物和图表、水印、标题、声音与镜头。双语模式会在原画面下方做柔和延展区放中文，不用大黑条。长句放不下时先精简字幕。
+
+**开跑前锁稿：**先改完字幕和样片发现的问题，确定片头、版式、字号、倍速后再渲染长片。若成片验收发现实质错误仍要修正重渲；这个步骤省的是可避免的返工，不是省掉质量检查。
 
 ```bash
 python scripts/render.py --input input.mp4 --subtitles work/chinese.srt \
