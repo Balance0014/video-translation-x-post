@@ -70,7 +70,7 @@ python scripts/render.py --input input.mp4 --subtitles work/chinese.srt \
   --title '关键人物说了什么|准确的开场钩子' --speed 1.2 --sample-seconds 8
 ```
 
-Watch the sample. Check English and Chinese order, readability, faces, charts, the watermark, title placement, speech clarity, and motion. If an existing logo occupies the top right, pass `--watermark-position top-left`. Even without English dialogue captions, the soft extension can protect source name labels or other important lower-third content. Revise the SRT or layout before the full export. Render the final with the same options and a new output path, without `--sample-seconds`:
+Watch the sample. Check English and Chinese order, readability, faces, charts, the watermark, title placement, speech clarity, and motion. For long videos, also play representative opening, middle, shot or slide transitions, and ending moments after the speed change; confirm the spoken words, Chinese subtitle, and current picture agree. If an existing logo occupies the top right, pass `--watermark-position top-left`. Even without English dialogue captions, the soft extension can protect source name labels or other important lower-third content. Revise the SRT or layout before the full export. Render the final with the same options and a new output path, without `--sample-seconds`:
 
 Settle the subtitles, hook, layout, font size, and speed before starting a long full render. Fix and rerender if final QA reveals a real defect; the pre-render gate removes avoidable rework without weakening quality checks.
 
@@ -80,10 +80,11 @@ If the default upper-left title would overlap a speaker, use `--title-position m
 python scripts/render.py --input input.mp4 --subtitles work/chinese.srt \
   --output work/final.mp4 --layout bilingual --watermark '翻译：@yourhandle' \
   --title '关键人物说了什么|准确的开场钩子' --speed 1.2
-python scripts/verify.py --output work/final.mp4 --source input.mp4 --speed 1.2
+python scripts/verify.py --output work/final.mp4 --source input.mp4 \
+  --source-subtitles work/chinese.srt --speed 1.2
 ```
 
-For a video with no English, replace `--layout bilingual` with `--layout chinese-only`; the Chinese goes on the original frame. Use `--mirror --mirror-verified` only after visual inspection confirms that no readable text or logo becomes reversed. The renderer refuses mirroring in bilingual mode. Speeding up at the original output frame rate naturally samples fewer frames; extra frame deletion is unnecessary.
+For a video with no English, replace `--layout bilingual` with `--layout chinese-only`; the Chinese goes on the original frame. `--source-subtitles` checks every final SRT cue against the source-timeline Chinese SRT after speed conversion; it detects shifted cues but does not replace listening and picture review. Use `--mirror --mirror-verified` only after visual inspection confirms that no readable text or logo becomes reversed. The renderer refuses mirroring in bilingual mode. Speeding up at the original output frame rate naturally samples fewer frames; extra frame deletion is unnecessary.
 
 ## 4. Deliver, write X copy, and remember the result
 
@@ -92,7 +93,8 @@ Copy the verified video and editable Chinese SRT to the requested folder. Check 
 ```bash
 cp work/final.mp4 ~/Desktop/final.mp4
 cp work/final.srt ~/Desktop/final.srt
-python scripts/verify.py --output work/final.mp4 --source input.mp4 --speed 1.2 \
+python scripts/verify.py --output work/final.mp4 --source input.mp4 \
+  --source-subtitles work/chinese.srt --speed 1.2 \
   --delivered ~/Desktop/final.mp4
 ```
 

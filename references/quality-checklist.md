@@ -1,10 +1,10 @@
 # Final review
 
 - Source and end point: correct video, no missing beginning or clipped ending; preserve uncertainty and incomplete sentences.
-- Language: Chinese sounds native, names and numbers match the source, cues follow speech.
+- Language: the whole Chinese SRT has been read and polished for natural wording, accurate meaning, consistent terminology, names, and numbers; cues follow speech.
 - Long-video pre-render gate: read the complete Chinese SRT; resolve uncertain lines against audio and source text; check speaker and shot/slide transitions, empty cues, invalid or overlapping times, and beginning/ending coverage. Save checked text so corrections do not trigger a new transcription or translation of the whole video.
 - Layout: preserve English when present; Chinese is below it; no large solid black bar; text and watermark remain legible without hiding key visuals. If no English, use Chinese alone.
-- Motion: any speed increase preserves speech clarity, argument order, scene transitions, and smooth motion. Any mirroring leaves visible writing readable.
+- Motion and sync: any speed increase preserves speech clarity, argument order, scene transitions, and smooth motion; every final SRT cue matches its source-timeline cue divided by speed; opening, middle, shot/slide transitions, and ending have been played to check voice, subtitle, and picture together. Any mirroring leaves visible writing readable.
 - Export: subtitles, hook, layout, and speed settled before the full render; sample reviewed; full file decodes; audio exists; dimensions and sample aspect ratio are correct; editable SRT matches the final timeline after speed changes; opening/middle/ending frames inspected; delivered copy matches verified file.
 - X: every export has a brief, accurate opening visual hook, confirmed in the sample and final file and clear of faces/captions/logos. The post hook is compelling and accurate; predictions are labeled as predictions; source is attributed when known; no claim that a changed MD5 or superficial edit makes reused material original.
 - State: record job facts in the local ledger; update preferences only for stable user choices; remove task-owned temporary files and idle processes.

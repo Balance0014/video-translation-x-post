@@ -49,8 +49,20 @@ def main() -> None:
                 command += ["--mirror", "--mirror-verified"]
             run(*command)
             run(sys.executable, str(ROOT / "scripts/verify.py"),
-                "--output", str(output), "--source", str(source), "--speed", "1.2")
-    print("PASS: private state, both subtitle layouts, speed, mirror gate, audio, and decode")
+                "--output", str(output), "--source", str(source),
+                "--source-subtitles", str(zh), "--speed", "1.2")
+            shifted = temp / f"{layout}-shifted.srt"
+            original = output.with_suffix(".srt").read_text(encoding="utf-8")
+            shifted.write_text(original.replace("00:00:00,167", "00:00:01,167", 1),
+                               encoding="utf-8")
+            rejected = subprocess.run(
+                [sys.executable, str(ROOT / "scripts/verify.py"),
+                 "--output", str(output), "--subtitles", str(shifted),
+                 "--source-subtitles", str(zh), "--speed", "1.2"],
+                capture_output=True, text=True, timeout=30, check=False)
+            if rejected.returncode == 0 or "Retimed SRT cue 1" not in rejected.stderr:
+                raise AssertionError("A one-second subtitle shift was not rejected")
+    print("PASS: private state, layouts, speed, per-cue subtitle sync, mirror gate, audio, and decode")
 
 
 if __name__ == "__main__":

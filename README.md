@@ -66,7 +66,7 @@ python scripts/render.py --input input.mp4 --subtitles work/chinese.srt \
   --title '准确的开场钩子|一句话说明主题' --speed 1.2 --sample-seconds 8
 ```
 
-播放样片，检查双语顺序、可读性、人物和图表、水印、标题、声音与镜头。双语模式会在原画面下方做柔和延展区放中文，不用大黑条。长句放不下时先精简字幕。
+播放样片，检查双语顺序、可读性、人物和图表、水印、标题、声音与镜头。双语模式会在原画面下方做柔和延展区放中文，不用大黑条。长句放不下时先精简字幕。长片还要在开头、中段、镜头或幻灯片转场、结尾选点播放，核对“听到的原话—中文字幕—当前画面”是否对应，尤其要检查提速后的时间点。
 
 **开跑前锁稿：**先改完字幕和样片发现的问题，确定片头、版式、字号、倍速后再渲染长片。若成片验收发现实质错误仍要修正重渲；这个步骤省的是可避免的返工，不是省掉质量检查。
 
@@ -74,10 +74,11 @@ python scripts/render.py --input input.mp4 --subtitles work/chinese.srt \
 python scripts/render.py --input input.mp4 --subtitles work/chinese.srt \
   --output work/final.mp4 --layout bilingual --watermark '翻译：@yourhandle' \
   --title '准确的开场钩子|一句话说明主题' --speed 1.2
-python scripts/verify.py --output work/final.mp4 --source input.mp4 --speed 1.2
+python scripts/verify.py --output work/final.mp4 --source input.mp4 \
+  --source-subtitles work/chinese.srt --speed 1.2
 ```
 
-成片旁自动生成 `work/final.srt`，时间轴已按最终速度重排。没有英文对白字幕时通常改用 `chinese-only`；如果原片底部有姓名标签或关键画面，也可用 `bilingual` 的柔和延展区保护原画面，但不要额外渲染英文字幕。水印与原片右上标志冲突时加 `--watermark-position top-left`。只有确认画面没有会倒置的文字、字幕、图表或 logo，才同时加入 `--mirror --mirror-verified`；双语模式禁止镜像。固定输出帧率下提速会自然减少部分帧，无须强行删帧。
+成片旁自动生成 `work/final.srt`，时间轴已按最终速度重排；`--source-subtitles` 会逐条核对成片字幕是否按倍速换算，发现整体或局部偏移就报错。这个程序检查不能代替前述音画播放检查。没有英文对白字幕时通常改用 `chinese-only`；如果原片底部有姓名标签或关键画面，也可用 `bilingual` 的柔和延展区保护原画面，但不要额外渲染英文字幕。水印与原片右上标志冲突时加 `--watermark-position top-left`。只有确认画面没有会倒置的文字、字幕、图表或 logo，才同时加入 `--mirror --mirror-verified`；双语模式禁止镜像。固定输出帧率下提速会自然减少部分帧，无须强行删帧。
 
 macOS 上的长视频可给样片和正式导出同时加 `--encoder h264_videotoolbox --video-bitrate 1500k` 使用硬件编码；先检查样片画质，分辨率更高时按需提高码率。默认仍用 `libx264`。
 
@@ -88,7 +89,8 @@ macOS 上的长视频可给样片和正式导出同时加 `--encoder h264_videot
 ```bash
 cp work/final.mp4 ~/Desktop/final.mp4
 cp work/final.srt ~/Desktop/final.srt
-python scripts/verify.py --output work/final.mp4 --source input.mp4 --speed 1.2 \
+python scripts/verify.py --output work/final.mp4 --source input.mp4 \
+  --source-subtitles work/chinese.srt --speed 1.2 \
   --delivered ~/Desktop/final.mp4
 ```
 
