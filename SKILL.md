@@ -27,6 +27,6 @@ Aim for a localized edition with an original feel through natural Chinese writin
 
 ## Publish package and memory
 
-- For an X post, start with the concrete surprising point, then explain what viewers learn. Attribute claims as the speaker's prediction or opinion, verify factual marketing claims, and identify the source when known. Do not publish or message anyone without user authorization.
+- For an interview clip's X post, open with one concise sentence naming the interview program and guest, and stating what they discuss. Give readers this context before the hook; then lead with the concrete surprising point and explain what viewers learn. For other videos, open with the concrete surprising point. Attribute claims as the speaker's prediction or opinion, verify factual marketing claims, and identify the source when known. Do not publish or message anyone without user authorization.
 - Deliver at the user's requested location, including the video and editable subtitles; provide the X text if requested. Record the actual input, choices, output paths, checks, and lesson learned in the local ledger. Update preferences only when the user establishes a reusable preference.
 - For first-time setup, exact CLI examples, troubleshooting, and a complete user path, read [README.md](README.md). For a compact final review, use [references/quality-checklist.md](references/quality-checklist.md).
