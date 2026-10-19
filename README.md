@@ -94,7 +94,7 @@ python scripts/verify.py --output work/final.mp4 --source input.mp4 \
   --delivered ~/Desktop/final.mp4
 ```
 
-X 文案先用具体信息抓住注意力，再写观众能得到什么；涉及预测就标成预测，知道来源就注明。署名、改色、镜像、抽帧或 MD5 变化本身不代表原视频具备原创资格，具体看 [X 当前规则](https://help.x.com/en/using-x/original-content-rewards)。未经用户授权，不代发。
+X 文案第一句先用视频里真实的问题、反差或细节抓住人，再用一两句交代节目是什么、嘉宾是谁。接着像中文母语者讲故事一样，用具体场景把观点、理由、例子和重要限定串起来；写得生动顺口，避免翻译腔、模板感和空泛煽动。长帖写完整，普通账号可用首帖配视频、跟帖补细节与成片时间码。涉及预测就标成预测，知道来源就注明。署名、改色、镜像、抽帧或 MD5 变化本身不代表原视频具备原创资格，具体看 [X 当前规则](https://help.x.com/en/using-x/original-content-rewards)。未经用户授权，不代发。
 
 首次运行 `python scripts/state.py init`，命令会打印私有偏好和台账路径。每次完成任务，把真实素材路径、交付路径、处理选择、验收结果和经验写入 Markdown，再运行：
 

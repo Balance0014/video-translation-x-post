@@ -98,7 +98,7 @@ python scripts/verify.py --output work/final.mp4 --source input.mp4 \
   --delivered ~/Desktop/final.mp4
 ```
 
-Have Codex write an X post with a concrete hook, the actual takeaways, and source attribution when known. Label predictions as predictions. A changed MD5, filter, mirror, or text overlay does not by itself make someone else's footage original under [X's current rewards rules](https://help.x.com/en/using-x/original-content-rewards). Do not publish without the account owner's instruction.
+Have Codex write the X post in natural, story-led Chinese. Open with a truthful question, tension, or detail from the clip; then briefly establish the interview program and guest when relevant. Build the argument through a concrete scene, the speaker's reasoning and examples, and any qualification that changes the conclusion. Avoid translated phrasing, stock hype, and invented events or quotes. Keep the first ordinary-X post engaging and understandable on its own, with replies for useful details and verified output-video timecodes. Attribute sources when known and label predictions as predictions. A changed MD5, filter, mirror, or text overlay does not by itself make someone else's footage original under [X's current rewards rules](https://help.x.com/en/using-x/original-content-rewards). Do not publish without the account owner's instruction.
 
 Run `python scripts/state.py init` once; it prints the private preference and ledger paths. Edit preferences for lasting choices. After every job, append a dated Markdown ledger entry with real input/output paths, decisions, checks, and lessons:
 
